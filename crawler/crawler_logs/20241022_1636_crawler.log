@@ -1,0 +1,22 @@
+2024-10-22 16:36:17,728 - INFO - Navigating to the Explore page...
+2024-10-22 16:36:19,327 - INFO - Clicking on the user link for 'a'...
+2024-10-22 16:36:29,553 - ERROR - An error occurred while sending private message to 'a': Message: 
+Stacktrace:
+0   chromedriver                        0x000000010098c500 cxxbridge1$str$ptr + 1917112
+1   chromedriver                        0x0000000100984890 cxxbridge1$str$ptr + 1885256
+2   chromedriver                        0x0000000100594538 cxxbridge1$string$len + 89424
+3   chromedriver                        0x00000001005d8878 cxxbridge1$string$len + 368784
+4   chromedriver                        0x0000000100612b7c cxxbridge1$string$len + 607124
+5   chromedriver                        0x00000001005cd374 cxxbridge1$string$len + 322444
+6   chromedriver                        0x00000001005cdfc4 cxxbridge1$string$len + 325596
+7   chromedriver                        0x0000000100953d2c cxxbridge1$str$ptr + 1685732
+8   chromedriver                        0x0000000100958530 cxxbridge1$str$ptr + 1704168
+9   chromedriver                        0x0000000100938e08 cxxbridge1$str$ptr + 1575360
+10  chromedriver                        0x0000000100958e00 cxxbridge1$str$ptr + 1706424
+11  chromedriver                        0x0000000100929f94 cxxbridge1$str$ptr + 1514316
+12  chromedriver                        0x000000010097562c cxxbridge1$str$ptr + 1823204
+13  chromedriver                        0x00000001009757ac cxxbridge1$str$ptr + 1823588
+14  chromedriver                        0x0000000100984530 cxxbridge1$str$ptr + 1884392
+15  libsystem_pthread.dylib             0x000000019a387fa8 _pthread_start + 148
+16  libsystem_pthread.dylib             0x000000019a382da0 thread_start + 8
+

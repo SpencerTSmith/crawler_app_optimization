@@ -22,7 +22,6 @@ def main():
     # display.start()
     driver = webdriver.Chrome()
     driver.get("http://127.0.0.1:5000")
-    username = driver.find_element()
 
 if __name__ == "__main__":
     main()

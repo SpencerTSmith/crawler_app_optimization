@@ -1,4 +1,4 @@
-FROM python:slim
+FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y gcc libpq-dev
 
@@ -14,5 +14,5 @@ RUN chmod a+x boot.sh
 ENV FLASK_APP microblog.py
 RUN flask translate compile
 
-EXPOSE 5000
+EXPOSE 8069
 ENTRYPOINT ["./boot.sh"]

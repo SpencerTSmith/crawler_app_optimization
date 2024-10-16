@@ -20,6 +20,25 @@ def generate_random_string():
     letters_and_digits = string.ascii_letters + string.digits
     return ''.join(random.choice(letters_and_digits) for i in range(10))
 
+def edit_bio(username, bio, driver):
+    start_time = time.time()
+    driver.find_element(By.CLASS_NAME, 'navbar-toggler-icon').click()
+    try:
+        logout_link = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.LINK_TEXT, 'Profile')))
+        logout_link.click()
+    except Exception as e:
+        print(e)
+    driver.find_element(By.LINK_TEXT, 'Edit your profile').click()
+    driver.find_element(By.ID, 'about_me').clear()
+    driver.find_element(By.ID, 'about_me').send_keys(bio)
+    driver.find_element(By.ID, 'submit').click()
+    success = driver.find_element(By.CLASS_NAME, 'alert-info').text
+    duration = time.time() - start_time
+    if (success == 'Your changes have been saved.'):
+        logging.info(f"Bio updated for user '{username}': (Duration {duration:.5f} s)")
+    else:
+        logging.error(f"Bio update failed for user '{username}': (Duration {duration:.5f} s)")
+
 def register(username, password, driver):
     start_time = time.time()
     driver.find_element(By.LINK_TEXT, 'Click to Register!').click()
@@ -99,6 +118,7 @@ def main():
     register(username=username, password=password, driver=driver)
     login(username=username, password=password, driver=driver)
     post(username=username, message=message, driver=driver)
+    edit_bio(username=username, bio='Hello, my name is ' + username, driver=driver)
     logout(username=username, driver=driver)
     forgot_password(email=email, driver=driver)
     driver.quit()

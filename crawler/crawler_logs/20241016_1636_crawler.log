@@ -1,5 +1,0 @@
-2024-10-16 16:36:48,092 - INFO - Registration successful for user 'n5FFCTVKWj': (Duration 0.66837 s)
-2024-10-16 16:36:48,555 - INFO - Login successful for user 'n5FFCTVKWj': (Duration 0.46282 s)
-2024-10-16 16:36:48,850 - INFO - 'n5FFCTVKWj' submitted a post successfully: (Duration 0.29499 s)
-2024-10-16 16:36:49,574 - INFO - Logout successful for 'n5FFCTVKWj': (Duration 0.72406 s)
-2024-10-16 16:36:49,840 - INFO - Forgot password request sent for email 'n5FFCTVKWj@gmail.com': (Duration 0.26587 s)

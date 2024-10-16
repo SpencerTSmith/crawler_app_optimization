@@ -14,5 +14,5 @@ RUN chmod a+x boot.sh
 ENV FLASK_APP microblog.py
 RUN flask translate compile
 
-EXPOSE 8069
+EXPOSE 5000
 ENTRYPOINT ["./boot.sh"]

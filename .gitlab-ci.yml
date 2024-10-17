@@ -23,4 +23,4 @@ crawler-test:
     - pip install selenium
     - pip install pyvirtualdisplay
     - echo "Running Crawler"
-    - python -m crawler.crawler.py
+    - python -m crawler.crawler

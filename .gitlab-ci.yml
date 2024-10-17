@@ -5,7 +5,7 @@ stages:
 
 dependencies:
   stage: dependencies
-  image: python:3.11slim
+  image: python:3.11
   script:
     - pip install -r ./microblog/requirements.txt
     - pip install selenium

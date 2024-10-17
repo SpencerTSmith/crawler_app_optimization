@@ -10,7 +10,7 @@ deploy:
     - pip install -r ./microblog/requirements.txt
     - echo "Deploying to local server"
     - cd ./microblog
-    - ./boot.sh
+    - ./boot.sh &
     - sleep 5
 
 crawler-test:

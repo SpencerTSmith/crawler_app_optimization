@@ -1,0 +1,27 @@
+stages:
+  - dependencies
+  - deploy
+  - test
+
+dependencies:
+  stage: dependencies
+  image: python:3.11slim
+  script:
+    - pip install -r ./microblog/requirements.txt
+    - pip install selenium
+    - pip install pyvirtualdisplay
+
+deploy:
+  stage: deploy
+  image: python:3.11slim
+  script:
+    - ./microblog/boot.sh
+    - sleep 5
+
+crawler-test:
+  stage: test
+  image: selenium/standalone-chrome
+  services: 
+    - selenium/standalone-chrome
+  script:
+    - python -m ./crawler/crawler.py

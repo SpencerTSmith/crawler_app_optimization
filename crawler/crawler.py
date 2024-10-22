@@ -10,11 +10,16 @@ import os
 import random
 import string
 import time
+from sys import argv
+from enum import StrEnum
 
 log_dir = 'crawler_logs'
 timestamp = datetime.now().strftime('%Y%m%d_%H%M')
 os.makedirs(log_dir, exist_ok=True)
 logging.basicConfig(filename=os.path.join(log_dir, f'{timestamp}_crawler.log'), level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+class Args(StrEnum):
+    HEADLESS = "-h"
 
 def generate_random_string():
     letters_and_digits = string.ascii_letters + string.digits
@@ -109,7 +114,13 @@ def post(username, message, driver):
 def main():
     # display = Display(visible=0, size=(800,600))
     # display.start()
-    driver = webdriver.Chrome()
+
+    driver_opts = Options()
+    if Args.HEADLESS in argv:
+        driver_opts.add_argument("--window-size=1920,1080")
+        driver_opts.add_argument("--headless=new")
+
+    driver = webdriver.Chrome(options=driver_opts)
     driver.get("http://127.0.0.1:5000")
     username = generate_random_string()
     email = username + '@gmail.com'

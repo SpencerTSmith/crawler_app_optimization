@@ -27,22 +27,28 @@ def generate_random_string():
 
 def edit_bio(username, bio, driver):
     start_time = time.time()
-    driver.find_element(By.CLASS_NAME, 'navbar-toggler-icon').click()
     try:
-        logout_link = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.LINK_TEXT, 'Profile')))
-        logout_link.click()
+        profile_link = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//a[@class='nav-link' and text()='Profile']"))
+        )
+        profile_link.click()
     except Exception as e:
         print(e)
-    driver.find_element(By.LINK_TEXT, 'Edit your profile').click()
-    driver.find_element(By.ID, 'about_me').clear()
-    driver.find_element(By.ID, 'about_me').send_keys(bio)
-    driver.find_element(By.ID, 'submit').click()
-    success = driver.find_element(By.CLASS_NAME, 'alert-info').text
-    duration = time.time() - start_time
-    if (success == 'Your changes have been saved.'):
-        logging.info(f"Bio updated for user '{username}': (Duration {duration:.5f} s)")
-    else:
-        logging.error(f"Bio update failed for user '{username}': (Duration {duration:.5f} s)")
+        logging.error(f"Failed to find or click the Profile link: {e}")
+        return
+    try:
+        driver.find_element(By.LINK_TEXT, 'Edit your profile').click()
+        driver.find_element(By.ID, 'about_me').clear()
+        driver.find_element(By.ID, 'about_me').send_keys(bio)
+        driver.find_element(By.ID, 'submit').click()
+        success = driver.find_element(By.CLASS_NAME, 'alert-info').text
+        duration = time.time() - start_time
+        if success == 'Your changes have been saved.':
+            logging.info(f"Bio updated for user '{username}': (Duration {duration:.5f} s)")
+        else:
+            logging.error(f"Bio update failed for user '{username}': (Duration {duration:.5f} s)")
+    except Exception as e:
+        logging.error(f"An error occurred while editing the bio: {e}")
 
 def register(username, password, driver):
     start_time = time.time()
@@ -73,12 +79,15 @@ def login(username, password, driver):
 
 def logout(username, driver):
     start_time = time.time()
-    driver.find_element(By.CLASS_NAME, 'navbar-toggler-icon').click()
     try:
-        logout_link = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.LINK_TEXT, 'Logout')))
-        logout_link.click()
+        profile_link = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//a[@class='nav-link' and text()='Logout']"))
+        )
+        profile_link.click()
     except Exception as e:
         print(e)
+        logging.error(f"Failed to find or click the Profile link: {e}")
+        return
     success = driver.find_element(By.CLASS_NAME, 'alert-info').text
     duration = time.time() - start_time
     if (success == 'Please log in to access this page.'):
@@ -110,6 +119,9 @@ def post(username, message, driver):
             return
     duration = time.time() - start_time
     logging.info(f"'{username}' post failed: (Duration {duration:.5f} s)")
+
+def private_message(username, message, driver):
+    return
 
 def main():
     # display = Display(visible=0, size=(800,600))

@@ -130,6 +130,8 @@ def main():
     driver_opts = Options()
     if Args.HEADLESS in argv:
         driver_opts.add_argument("--window-size=1920,1080")
+        driver_opts.add_argument('--no-sandbox')
+        driver_opts.add_argument('--disable-dev-shm-usage')
         driver_opts.add_argument("--headless=new")
 
     driver = webdriver.Chrome(options=driver_opts)

@@ -4,7 +4,7 @@ stages:
 
 deploy:
   stage: deploy
-  image: python:3.11
+  image: python:3.11-slim
   script:
     - echo "Installing Microblog dependencies"
     - pip install -r ./microblog/requirements.txt
@@ -15,7 +15,7 @@ deploy:
 
 crawler-test:
   stage: test
-  image: python:3.11
+  image: python:3.11-slim
   services: 
     - selenium/standalone-chrome
   script:

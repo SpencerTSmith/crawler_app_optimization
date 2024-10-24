@@ -20,6 +20,8 @@ logging.basicConfig(filename=os.path.join(log_dir, f'{timestamp}_crawler.log'), 
 
 class Args(StrEnum):
     HEADLESS = "-h"
+    REGISTER = "--register"
+    POST = "--post"
 
 def generate_random_string():
     letters_and_digits = string.ascii_letters + string.digits
@@ -51,6 +53,21 @@ def edit_bio(username, bio, driver):
         logging.error(f"An error occurred while editing the bio: {e}")
 
 def register(username, password, driver):
+    start_time = time.time()
+    driver.find_element(By.LINK_TEXT, 'Click to Register!').click()
+    driver.find_element(By.ID, 'username').send_keys(username)
+    driver.find_element(By.ID, 'email').send_keys(username + '@gmail.com')
+    driver.find_element(By.ID, 'password').send_keys(password)
+    driver.find_element(By.ID, 'password2').send_keys(password)
+    driver.find_element(By.ID, 'submit').click()
+    success = driver.find_element(By.CLASS_NAME, 'alert-info').text
+    duration = time.time() - start_time
+    if (success == 'Congratulations, you are now a registered user!'):
+        logging.info(f"Registration successful for user '{username}': (Duration {duration:.5f} s)")
+    else:
+        logging.error(f"Registration failed for user '{username}': (Duration {duration:.5f} s)")
+
+def register_bench(username, password, driver):
     start_time = time.time()
     driver.find_element(By.LINK_TEXT, 'Click to Register!').click()
     driver.find_element(By.ID, 'username').send_keys(username)
@@ -140,12 +157,25 @@ def main():
     email = username + '@gmail.com'
     password = generate_random_string()
     message = generate_random_string()
+
+    if Args.REGISTER in argv:
+        register_bench(username=username, password=password, driver=driver)
+        driver.quit()
+        return
+
+    start_time = time.time()
     register(username=username, password=password, driver=driver)
+
     login(username=username, password=password, driver=driver)
     post(username=username, message=message, driver=driver)
     edit_bio(username=username, bio='Hello, my name is ' + username, driver=driver)
     logout(username=username, driver=driver)
     forgot_password(email=email, driver=driver)
+
+    stop_time = time.time()
+    duration = stop_time - start_time
+    logging.info(f"'{username}' successful run of all crawler tests: (Duration {duration:.5f} s)")
+
     driver.quit()
 
 if __name__ == "__main__":

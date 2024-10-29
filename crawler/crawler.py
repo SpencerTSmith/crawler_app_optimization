@@ -67,17 +67,25 @@ def register(username, password, driver):
 
 
 def login(username, password, driver):
-    start_time = time.time()
-    driver.find_element(By.ID, 'username').send_keys(username)
-    driver.find_element(By.ID, 'password').send_keys(password)
-    driver.find_element(By.ID, 'submit').click()
-    success = driver.find_element(By.TAG_NAME, 'h1').text
-    duration = time.time() - start_time
-    if (success == 'Hi, ' + username + '!'):
-        print(f"Login successful for user '{username}': (Duration {duration:.5f} s)")
-    else:
-        print(f"Login failed for user '{username}': (Duration {duration:.5f} s)")
+    """Logs in a user with the provided username and password using the WebDriver."""
+    try:
+        start_time = time.time()
+        driver.find_element(By.ID, 'username').send_keys(username)
+        driver.find_element(By.ID, 'password').send_keys(password)
+        driver.find_element(By.ID, 'submit').click()
 
+        # Check if the login is successful by verifying the page header
+        success = driver.find_element(By.TAG_NAME, 'h1').text
+        duration = time.time() - start_time
+        if success == f'Hi, {username}!':
+            print(f"Login successful for user '{username}': (Duration {duration:.5f} s)")
+            return True
+        else:
+            print(f"Login failed for user '{username}': (Duration {duration:.5f} s)")
+            return False
+    except Exception as e:
+        print(f"An error occurred during login for '{username}': {e}")
+        return False
 
 def logout(username, driver):
     start_time = time.time()

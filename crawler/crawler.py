@@ -3,7 +3,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from pyvirtualdisplay import Display
 from datetime import datetime
 import logging
 import os
@@ -12,6 +11,7 @@ import string
 import time
 from sys import argv
 from enum import StrEnum
+import multiprocessing as mp
 
 log_dir = 'crawler_logs'
 timestamp = datetime.now().strftime('%Y%m%d_%H%M')
@@ -67,20 +67,14 @@ def register(username, password, driver):
     else:
         logging.error(f"Registration failed for user '{username}': (Duration {duration:.5f} s)")
 
-def register_bench(username, password, driver):
-    start_time = time.time()
-    driver.find_element(By.LINK_TEXT, 'Click to Register!').click()
-    driver.find_element(By.ID, 'username').send_keys(username)
-    driver.find_element(By.ID, 'email').send_keys(username + '@gmail.com')
-    driver.find_element(By.ID, 'password').send_keys(password)
-    driver.find_element(By.ID, 'password2').send_keys(password)
-    driver.find_element(By.ID, 'submit').click()
-    success = driver.find_element(By.CLASS_NAME, 'alert-info').text
-    duration = time.time() - start_time
-    if (success == 'Congratulations, you are now a registered user!'):
-        logging.info(f"Registration successful for user '{username}': (Duration {duration:.5f} s)")
-    else:
-        logging.error(f"Registration failed for user '{username}': (Duration {duration:.5f} s)")
+def register_bench():
+    # spin up processes
+
+    # each process gets a driver
+    
+    # each process goes to loop of registering users, counting the # it got to
+
+    # add #'s together, divide by time taken
 
 def login(username, password, driver):
     start_time = time.time()
@@ -144,6 +138,10 @@ def main():
     # display = Display(visible=0, size=(800,600))
     # display.start()
 
+    if Args.REGISTER in argv:
+        register_bench()
+        return
+
     driver_opts = Options()
     if Args.HEADLESS in argv:
         driver_opts.add_argument("--window-size=1920,1080")
@@ -158,10 +156,6 @@ def main():
     password = generate_random_string()
     message = generate_random_string()
 
-    if Args.REGISTER in argv:
-        register_bench(username=username, password=password, driver=driver)
-        driver.quit()
-        return
 
     start_time = time.time()
     register(username=username, password=password, driver=driver)

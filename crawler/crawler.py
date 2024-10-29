@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -206,25 +207,52 @@ def send_private_message(username, target_username, message, driver):
     except Exception as e:
         print(f"An error occurred while sending private message to '{target_username}': {e}")
 
+def send_messages_multithreaded(tasks, driver_creator, max_workers=4):
+    """Sends messages concurrently, each with a separate WebDriver instance."""
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = []
+        for username, password, target_username, message in tasks:
+                process_message_task(username, password, target_username, message, driver_creator())
 
-def main():
+        """for future in as_completed(futures):
+            try:
+                future.result()  # This will raise exceptions if any occurred within the thread
+            except Exception as exc:
+                print(f"Generated an exception: {exc}")"""
+
+def process_message_task(username, password, target_username, message, driver):
+    """Logs in and sends a private message."""
+    if login(username, password, driver):
+        send_private_message(username, target_username, message, driver)
+    driver.quit()  # Close the WebDriver instance when done
+
+def create_webdriver():
+    """Creates a new WebDriver instance."""
     chrome_options = Options()
     chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--window-size=1200,900"),
+    chrome_options.add_argument("--window-size=1200,900")
     driver = webdriver.Chrome(options=chrome_options)
-    driver.get("http://127.0.0.1:5000")
+    driver.get("http://127.0.0.1:3000")
+    return driver
+
+def main():
+    driver_creator = create_webdriver
     username = generate_random_string()
     email = username + '@gmail.com'
     password = generate_random_string()
     message = generate_random_string()
-    register(username=username, password=password, driver=driver)
-    login(username=username, password=password, driver=driver)
+    """register(username=username, password=password, driver=driver)
     post(username=username, message=message, driver=driver)
     edit_bio(username=username, bio='Hello, my name is ' + username, driver=driver)
     logout(username=username, driver=driver)
-    forgot_password(email=email, driver=driver)
-    driver.quit()
-
+    forgot_password(email=email, driver=driver)"""
+    tasks = [('a', 'a', 'm', "Hello, this is a test message!"),
+    ("m", 'm', 'a', "Another message for you!")]
+    # Benchmark the multithreaded execution
+    start_time = time.time()
+    send_messages_multithreaded(tasks, driver_creator, max_workers=4)
+    total_duration = time.time() - start_time
+    print(f"Total time taken for all messages: {total_duration:.5f} s")
 
 if __name__ == "__main__":
     main()

@@ -93,26 +93,53 @@ def register_worker(_):
     driver.get("http://127.0.0.1:5000")
 
     # each process registers 100 users
-    start_time = time.time()
     for _ in range(5):
         username = generate_random_string()
-        email = username + '@gmail.com'
         password = generate_random_string()
-        driver.find_element(By.LINK_TEXT, 'Click to Register!').click()
-        driver.find_element(By.ID, 'username').send_keys(username)
-        driver.find_element(By.ID, 'email').send_keys(email)
-        driver.find_element(By.ID, 'password').send_keys(password)
-        driver.find_element(By.ID, 'password2').send_keys(password)
-        driver.find_element(By.ID, 'submit').click()
-        success = driver.find_element(By.CLASS_NAME, 'alert-info').text
-        end_time = time.time()
-        duration = end_time - start_time
-        if (success == 'Congratulations, you are now a registered user!'):
-            logging.info(f"Registration successful for user '{username}': (Duration {duration:.5f} s)")
-        else:
-            logging.error(f"Registration failed for user '{username}': (Duration {duration:.5f} s)")
+        register(username, password, driver)
 
     driver.quit()
+
+def post_bench():
+
+    start_time = time.time()
+    workers = mp.Pool()
+    workers.map(register_worker, range(mp.cpu_count()))
+    workers.close()
+    end_time = time.time()
+
+    total_duration = end_time - start_time
+
+    # each process should be registering 100 users
+    n_registered = mp.cpu_count() * 5
+    
+    logging.info(f"{n_registered} registrations complete in {total_duration}")
+
+def post_worker(username, password):
+    # each process gets a driver
+    driver_opts = Options()
+    driver_opts.add_argument("--window-size=1920,1080")
+    driver_opts.add_argument('--no-sandbox')
+    driver_opts.add_argument('--disable-dev-shm-usage')
+    driver_opts.add_argument("--headless=new")
+
+    driver = webdriver.Chrome(options=driver_opts)
+    driver.get("http://127.0.0.1:5000")
+
+    # login and get to post screen
+    login(username, password, driver)
+
+    # start_time = time.time()
+    # driver.find_element(By.ID, 'post').send_keys(message)
+    # driver.find_element(By.ID, 'submit').click()
+    # posts = driver.find_elements(By.TAG_NAME, 'span')
+    # for post in posts:
+    #     if post.text == message:
+    #         duration = time.time() - start_time
+    #         logging.info(f"'{username}' submitted a post successfully: (Duration {duration:.5f} s)")
+    #         return
+    # duration = time.time() - start_time
+    # logging.info(f"'{username}' post failed: (Duration {duration:.5f} s)")
 
 def login(username, password, driver):
     start_time = time.time()
@@ -176,6 +203,10 @@ def main():
 
     if Args.REGISTER in argv:
         register_bench()
+        return
+
+    if Args.POST in argv:
+        post_bench()
         return
 
     driver_opts = Options()

@@ -1,10 +1,10 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from queue import Queue
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from pyvirtualdisplay import Display
 from datetime import datetime
 import logging
 import os
@@ -12,6 +12,7 @@ import random
 import string
 import time
 
+# Set up logging
 log_dir = 'crawler_logs'
 timestamp = datetime.now().strftime('%Y%m%d_%H%M')
 os.makedirs(log_dir, exist_ok=True)
@@ -25,33 +26,25 @@ def generate_random_string():
 
 
 def edit_bio(username, bio, driver):
-    start_time = time.time()
     try:
-        profile_link = WebDriverWait(driver, 10).until(
+        profile_link = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.XPATH, "//a[@class='nav-link' and text()='Profile']"))
         )
         profile_link.click()
-    except Exception as e:
-        print(e)
-        logging.error(f"Failed to find or click the Profile link: {e}")
-        return
-    try:
         driver.find_element(By.LINK_TEXT, 'Edit your profile').click()
         driver.find_element(By.ID, 'about_me').clear()
         driver.find_element(By.ID, 'about_me').send_keys(bio)
         driver.find_element(By.ID, 'submit').click()
         success = driver.find_element(By.CLASS_NAME, 'alert-info').text
-        duration = time.time() - start_time
         if success == 'Your changes have been saved.':
-            logging.info(f"Bio updated for user '{username}': (Duration {duration:.5f} s)")
+            logging.info(f"Bio updated for user '{username}'")
         else:
-            logging.error(f"Bio update failed for user '{username}': (Duration {duration:.5f} s)")
+            logging.error(f"Bio update failed for user '{username}'")
     except Exception as e:
         logging.error(f"An error occurred while editing the bio: {e}")
 
 
 def register(username, password, driver):
-    start_time = time.time()
     driver.find_element(By.LINK_TEXT, 'Click to Register!').click()
     driver.find_element(By.ID, 'username').send_keys(username)
     driver.find_element(By.ID, 'email').send_keys(username + '@gmail.com')
@@ -59,208 +52,162 @@ def register(username, password, driver):
     driver.find_element(By.ID, 'password2').send_keys(password)
     driver.find_element(By.ID, 'submit').click()
     success = driver.find_element(By.CLASS_NAME, 'alert-info').text
-    duration = time.time() - start_time
-    if (success == 'Congratulations, you are now a registered user!'):
-        logging.info(f"Registration successful for user '{username}': (Duration {duration:.5f} s)")
+    if success == 'Congratulations, you are now a registered user!':
+        logging.info(f"Registration successful for user '{username}'")
     else:
-        logging.error(f"Registration failed for user '{username}': (Duration {duration:.5f} s)")
+        logging.error(f"Registration failed for user '{username}'")
 
 
 def login(username, password, driver):
-    """Logs in a user with the provided username and password using the WebDriver."""
     try:
-        start_time = time.time()
         driver.find_element(By.ID, 'username').send_keys(username)
         driver.find_element(By.ID, 'password').send_keys(password)
         driver.find_element(By.ID, 'submit').click()
-
-        # Check if the login is successful by verifying the page header
         success = driver.find_element(By.TAG_NAME, 'h1').text
-        duration = time.time() - start_time
         if success == f'Hi, {username}!':
-            print(f"Login successful for user '{username}': (Duration {duration:.5f} s)")
+            print(f"Login successful for user '{username}'")
             return True
         else:
-            print(f"Login failed for user '{username}': (Duration {duration:.5f} s)")
+            print(f"Login failed for user '{username}'")
             return False
     except Exception as e:
         print(f"An error occurred during login for '{username}': {e}")
         return False
 
+
 def logout(username, driver):
-    start_time = time.time()
     try:
-        profile_link = WebDriverWait(driver, 10).until(
+        profile_link = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.XPATH, "//a[@class='nav-link' and text()='Logout']"))
         )
         profile_link.click()
+        success = driver.find_element(By.CLASS_NAME, 'alert-info').text
+        if success == 'Please log in to access this page.':
+            logging.info(f"Logout successful for '{username}'")
+        else:
+            logging.error(f"Logout failed for '{username}'")
     except Exception as e:
-        print(e)
-        logging.error(f"Failed to find or click the Profile link: {e}")
-        return
-    success = driver.find_element(By.CLASS_NAME, 'alert-info').text
-    duration = time.time() - start_time
-    if (success == 'Please log in to access this page.'):
-        logging.info(f"Logout successful for '{username}': (Duration {duration:.5f} s)")
-    else:
-        logging.error(f"Logout failed for '{username}': (Duration {duration:.5f} s)")
-
-
-def forgot_password(email, driver):
-    start_time = time.time()
-    driver.find_element(By.LINK_TEXT, 'Click to Reset It').click()
-    driver.find_element(By.ID, 'email').send_keys(email)
-    driver.find_element(By.ID, 'submit').click()
-    success = driver.find_element(By.CLASS_NAME, 'alert-info').text
-    duration = time.time() - start_time
-    if (success == 'Check your email for the instructions to reset your password'):
-        logging.info(f"Forgot password request sent for email '{email}': (Duration {duration:.5f} s)")
-    else:
-        logging.error(f"Forgot password request failed for email '{email}': (Duration {duration:.5f} s)")
+        logging.error(f"Failed to logout for user '{username}': {e}")
 
 
 def post(username, message, driver):
-    start_time = time.time()
     driver.find_element(By.ID, 'post').send_keys(message)
     driver.find_element(By.ID, 'submit').click()
     posts = driver.find_elements(By.TAG_NAME, 'span')
     for post in posts:
         if post.text == message:
-            duration = time.time() - start_time
-            logging.info(f"'{username}' submitted a post successfully: (Duration {duration:.5f} s)")
+            logging.info(f"'{username}' submitted a post successfully")
             return
-    duration = time.time() - start_time
-    logging.info(f"'{username}' post failed: (Duration {duration:.5f} s)")
-
-
-from selenium.webdriver.support.ui import Select
+    logging.info(f"'{username}' post failed")
 
 
 def send_private_message(username, target_username, message, driver):
     try:
-        start_time = time.time()
-
-        # Click on the "Explore" link to navigate to the Explore page
-        print("Navigating to the Explore page by clicking on the 'Explore' link...")
-        explore_link = WebDriverWait(driver, 10).until(
+        explore_link = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.LINK_TEXT, "Explore"))
         )
         explore_link.click()
-
-        print("Listing all user links on the Explore page:")
         user_links = driver.find_elements(By.CLASS_NAME, "user_popup")
-        # Loop through the user links and find the one that matches the target username
         for link in user_links:
-            text = link.text.strip()
-            if text == target_username:  # Check for exact match with the target username
-                print(f"Found target user link: '{text}' - href: {link.get_attribute('href')}")
-                link.click()  # Click the matching link
+            if link.text.strip() == target_username:
+                link.click()
                 break
         else:
             print(f"Could not find a link matching the target username: '{target_username}'")
-            return  # Exit the function if the target user is not found
+            return
 
-        # Wait for the User Profile page to load
-        print("Waiting for the User Profile page to load...")
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.LINK_TEXT, "Send private message"))
-        )
+        ).click()
 
-        # Click the "Send private message" link
-        print("Clicking 'Send private message' link...")
-        send_message_link = driver.find_element(By.LINK_TEXT, "Send private message")
-        send_message_link.click()
-
-        # Wait for the private message form to load
-        print("Waiting for the private message form to load...")
-        WebDriverWait(driver, 10).until(
+        message_textarea = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.TAG_NAME, 'textarea'))
         )
-
-        # Fill in the message text area
-        print("Filling in the message text area...")
-        message_textarea = driver.find_element(By.TAG_NAME, 'textarea')
-        if message_textarea:
-            print("Message text area found.")
-        else:
-            print("Message text area not found.")
-            return
-
         message_textarea.send_keys(message)
-
-        # Click the Submit button to send the message
-        # Click the Submit button to send the message
-        print("Clicking the Submit button...")
         submit_button = driver.find_element(By.ID, 'submit')
-        if submit_button:
-            submit_button.click()
-            print("Submit button clicked.")
-        else:
-            print("Submit button not found.")
-            return
+        submit_button.click()
 
-        # Verify the success message or sent messages page
-        print("Waiting for the success message...")
-        success_message = WebDriverWait(driver, 10).until(
+        success_message = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'alert-info'))
         ).text
-
-        duration = time.time() - start_time
         if success_message == 'Your message has been sent.':
-            print(
-                f"Private message sent from '{username}' to '{target_username}': (Duration {duration:.5f} s)")
+            print(f"Private message sent from '{username}' to '{target_username}'")
         else:
-            print(
-                f"Private message failed for '{username}' to '{target_username}': (Duration {duration:.5f} s)")
+            print(f"Private message failed for '{username}' to '{target_username}'")
     except Exception as e:
         print(f"An error occurred while sending private message to '{target_username}': {e}")
 
-def send_messages_multithreaded(tasks, driver_creator, max_workers=4):
-    """Sends messages concurrently, each with a separate WebDriver instance."""
+
+class WebDriverPool:
+    """A pool of WebDriver instances to optimize reuse and reduce setup time."""
+    def __init__(self, size):
+        self.pool = Queue(maxsize=size)
+        for _ in range(size):
+            self.pool.put(self.create_webdriver())
+
+    def create_webdriver(self):
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--window-size=1200,900")
+        driver = webdriver.Chrome(options=chrome_options)
+        driver.get("http://127.0.0.1:3000")
+        return driver
+
+    def acquire(self):
+        """Acquire a WebDriver instance from the pool."""
+        return self.pool.get()
+
+    def release(self, driver):
+        """Release a WebDriver instance back to the pool."""
+        self.pool.put(driver)
+
+    def close_all(self):
+        """Close all WebDriver instances in the pool."""
+        while not self.pool.empty():
+            driver = self.pool.get()
+            driver.quit()
+
+
+def send_messages_multithreaded(tasks, webdriver_pool, max_workers=4):
+    """Send messages concurrently with WebDriver instance reuse."""
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = []
         for username, password, target_username, message in tasks:
-                process_message_task(username, password, target_username, message, driver_creator())
+            driver = webdriver_pool.acquire()
+            futures.append(
+                executor.submit(process_message_task, username, password, target_username, message, driver, webdriver_pool)
+            )
 
-        """for future in as_completed(futures):
+        for future in as_completed(futures):
             try:
-                future.result()  # This will raise exceptions if any occurred within the thread
+                future.result()
             except Exception as exc:
-                print(f"Generated an exception: {exc}")"""
+                print(f"Generated an exception: {exc}")
 
-def process_message_task(username, password, target_username, message, driver):
-    """Logs in and sends a private message."""
-    if login(username, password, driver):
-        send_private_message(username, target_username, message, driver)
-    driver.quit()  # Close the WebDriver instance when done
 
-def create_webdriver():
-    """Creates a new WebDriver instance."""
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--window-size=1200,900")
-    driver = webdriver.Chrome(options=chrome_options)
-    driver.get("http://127.0.0.1:3000")
-    return driver
+def process_message_task(username, password, target_username, message, driver, webdriver_pool):
+    """Log in, send a private message, and release the WebDriver back to the pool."""
+    try:
+        if login(username, password, driver):
+            send_private_message(username, target_username, message, driver)
+    finally:
+        webdriver_pool.release(driver)
+
 
 def main():
-    driver_creator = create_webdriver
-    username = generate_random_string()
-    email = username + '@gmail.com'
-    password = generate_random_string()
-    message = generate_random_string()
-    """register(username=username, password=password, driver=driver)
-    post(username=username, message=message, driver=driver)
-    edit_bio(username=username, bio='Hello, my name is ' + username, driver=driver)
-    logout(username=username, driver=driver)
-    forgot_password(email=email, driver=driver)"""
-    tasks = [('a', 'a', 'm', "Hello, this is a test message!"),
-    ("m", 'm', 'a', "Another message for you!")]
-    # Benchmark the multithreaded execution
+    webdriver_pool = WebDriverPool(size=4)
+    tasks = [
+        ('a', 'a', 'm', "Hello, this is a test message!"),
+        ("m", 'm', 'a', "Another message for you!")
+    ]
+
     start_time = time.time()
-    send_messages_multithreaded(tasks, driver_creator, max_workers=4)
+    send_messages_multithreaded(tasks, webdriver_pool, max_workers=4)
     total_duration = time.time() - start_time
     print(f"Total time taken for all messages: {total_duration:.5f} s")
+
+    webdriver_pool.close_all()
+
 
 if __name__ == "__main__":
     main()

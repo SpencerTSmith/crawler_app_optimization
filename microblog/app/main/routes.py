@@ -13,6 +13,7 @@ from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
 from app import cache
+from app import socketio
 import asyncio
 
 
@@ -39,6 +40,7 @@ def index():
                     language=language)
         db.session.add(post)
         db.session.commit()
+        socketio.emit('new_post', {'author': current_user.username, 'body': post.body}, broadcast=True)
         cache.delete(f'index_view_{current_user.id}') # Cache Stuff
         flash(_('Your post is now live!'))
         return redirect(url_for('main.index'))

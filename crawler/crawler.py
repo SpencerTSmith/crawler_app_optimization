@@ -53,24 +53,34 @@ def register(username, password, driver):
     driver.find_element(By.ID, 'password').send_keys(password)
     driver.find_element(By.ID, 'password2').send_keys(password)
     driver.find_element(By.ID, 'submit').click()
-    success = driver.find_element(By.CLASS_NAME, 'alert-info').text
-    duration = time.time() - start_time
-    if (success == 'Congratulations, you are now a registered user!'):
-        logging.info(f"Registration successful for user '{username}': (Duration {duration:.5f} s)")
-    else:
-        logging.error(f"Registration failed for user '{username}': (Duration {duration:.5f} s)")
+    try:
+        success = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.CLASS_NAME, 'alert-info'))
+        ).text
+        duration = time.time() - start_time
+        if success == 'Congratulations, you are now a registered user!':
+            logging.info(f"Registration successful for user '{username}': (Duration {duration:.5f} s)")
+        else:
+            logging.error(f"Registration failed for user '{username}': (Duration {duration:.5f} s)")
+    except Exception as e:
+        logging.error(f"Failed to get registration success message: {e}")
 
 def login(username, password, driver):
     start_time = time.time()
     driver.find_element(By.ID, 'username').send_keys(username)
     driver.find_element(By.ID, 'password').send_keys(password)
     driver.find_element(By.ID, 'submit').click()
-    success = driver.find_element(By.TAG_NAME, 'h1').text
-    duration = time.time() - start_time
-    if (success == 'Hi, ' + username + '!'):
-        logging.info(f"Login successful for user '{username}': (Duration {duration:.5f} s)")
-    else:
-        logging.error(f"Login failed for user '{username}': (Duration {duration:.5f} s)")
+    try:
+        success = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.TAG_NAME, 'h1'))
+        ).text
+        duration = time.time() - start_time
+        if success == 'Hi, ' + username + '!':
+            logging.info(f"Login successful for user '{username}': (Duration {duration:.5f} s)")
+        else:
+            logging.error(f"Login failed for user '{username}': (Duration {duration:.5f} s)")
+    except Exception as e:
+        logging.error(f"Failed to get login success message: {e}")
 
 def logout(username, driver):
     start_time = time.time()
@@ -83,37 +93,53 @@ def logout(username, driver):
         print(e)
         logging.error(f"Failed to find or click the Profile link: {e}")
         return
-    success = driver.find_element(By.CLASS_NAME, 'alert-info').text
-    duration = time.time() - start_time
-    if (success == 'Please log in to access this page.'):
-        logging.info(f"Logout successful for '{username}': (Duration {duration:.5f} s)")
-    else:
-        logging.error(f"Logout failed for '{username}': (Duration {duration:.5f} s)")
+    try:
+        success = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.CLASS_NAME, 'alert-info'))
+        ).text
+        duration = time.time() - start_time
+        if success == 'Please log in to access this page.':
+            logging.info(f"Logout successful for '{username}': (Duration {duration:.5f} s)")
+        else:
+            logging.error(f"Logout failed for '{username}': (Duration {duration:.5f} s)")
+    except Exception as e:
+        logging.error(f"Failed to get logout confirmation message: {e}")
 
 def forgot_password(email, driver):
     start_time = time.time()
     driver.find_element(By.LINK_TEXT, 'Click to Reset It').click()
     driver.find_element(By.ID, 'email').send_keys(email)
     driver.find_element(By.ID, 'submit').click()
-    success = driver.find_element(By.CLASS_NAME, 'alert-info').text
-    duration = time.time() - start_time
-    if (success == 'Check your email for the instructions to reset your password'):
-        logging.info(f"Forgot password request sent for email '{email}': (Duration {duration:.5f} s)")
-    else:
-        logging.error(f"Forgot password request failed for email '{email}': (Duration {duration:.5f} s)")
-
+    try:
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'alert-info'))
+        )
+        success = driver.find_element(By.CLASS_NAME, 'alert-info').text
+        duration = time.time() - start_time
+        if success == 'Check your email for the instructions to reset your password':
+            logging.info(f"Forgot password request sent for email '{email}': (Duration {duration:.5f} s)")
+        else:
+            logging.error(f"Forgot password request failed for email '{email}': (Duration {duration:.5f} s)")
+    except Exception as e:
+        logging.error(f"An error occurred while waiting for the forgot password confirmation: {e}")
+   
 def post(username, message, driver):
     start_time = time.time()
     driver.find_element(By.ID, 'post').send_keys(message)
     driver.find_element(By.ID, 'submit').click()
-    posts = driver.find_elements(By.TAG_NAME, 'span')
-    for post in posts:
-        if post.text == message:
+    try:
+        post = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.CLASS_NAME, "alert"))
+        ).text
+        if "Your post is now live!" in post:
             duration = time.time() - start_time
             logging.info(f"'{username}' submitted a post successfully: (Duration {duration:.5f} s)")
-            return
-    duration = time.time() - start_time
-    logging.info(f"'{username}' post failed: (Duration {duration:.5f} s)")
+        else:
+            duration = time.time() - start_time
+            logging.error(f"'{username}' post failed: (Duration {duration:.5f} s)")
+    except Exception as e:
+        logging.error(f"Failed to confirm post submission: {e}")
+    
 
 def private_message(username, message, driver):
     return

@@ -27,7 +27,6 @@ async def before_request():
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
-@cache.cached(timeout=60)
 @login_required
 def index():
     form = PostForm()
@@ -40,8 +39,16 @@ def index():
                     language=language)
         db.session.add(post)
         db.session.commit()
+        cache.delete(f'index_view_{current_user.id}') # Cache Stuff
         flash(_('Your post is now live!'))
         return redirect(url_for('main.index'))
+    
+    # Cache Stuff
+    cache_key = f'index_view_{current_user.id}'
+    cached_response = cache.get(cache_key)
+    if cached_response is not None:
+        return cached_response
+    
     page = request.args.get('page', 1, type=int)
     posts = db.paginate(current_user.following_posts(), page=page,
                         per_page=current_app.config['POSTS_PER_PAGE'],
@@ -50,6 +57,10 @@ def index():
         if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) \
         if posts.has_prev else None
+    
+    response = render_template('index.html', title=_('Home'), form=form, posts=posts.items, next_url=next_url, prev_url=prev_url)
+    cache.set(cache_key, response, timeout=60)
+
     return render_template('index.html', title=_('Home'), form=form,
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)

@@ -2,6 +2,9 @@ import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
 from flask import Flask, request, current_app
+from flask_minify import minify
+from flask_compress import Compress
+from flask_caching import Cache
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -13,11 +16,7 @@ from redis import Redis
 import rq
 from config import Config
 
-
-def get_locale():
-    return request.accept_languages.best_match(current_app.config['LANGUAGES'])
-
-
+# Initialize extensions
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
@@ -26,11 +25,19 @@ login.login_message = _l('Please log in to access this page.')
 mail = Mail()
 moment = Moment()
 babel = Babel()
+cache = Cache()
 
+def get_locale():
+    return request.accept_languages.best_match(current_app.config['LANGUAGES'])
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    # Initialize extensions with the app
+    cache.init_app(app, config={'CACHE_TYPE': 'simple'})  # Initialize cache here
+    Compress(app)
+    minify(app=app, html=True, js=True, cssless=True)
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -38,11 +45,14 @@ def create_app(config_class=Config):
     mail.init_app(app)
     moment.init_app(app)
     babel.init_app(app, locale_selector=get_locale)
+    
+    # Setup Elasticsearch and Redis
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
         if app.config['ELASTICSEARCH_URL'] else None
     app.redis = Redis.from_url(app.config['REDIS_URL'])
     app.task_queue = rq.Queue('microblog-tasks', connection=app.redis)
 
+    # Import and register blueprints here to avoid circular imports
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
 
@@ -58,12 +68,12 @@ def create_app(config_class=Config):
     from app.api import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
 
+    # Logging configuration
     if not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:
             auth = None
             if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
-                auth = (app.config['MAIL_USERNAME'],
-                        app.config['MAIL_PASSWORD'])
+                auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
             secure = None
             if app.config['MAIL_USE_TLS']:
                 secure = ()
@@ -96,4 +106,4 @@ def create_app(config_class=Config):
     return app
 
 
-from app import models
+from app import models  # Ensure this is at the end to avoid circular imports

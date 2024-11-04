@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from flask import render_template, flash, redirect, url_for, request, g, \
     current_app
 from flask_login import current_user, login_required
+from flask_caching import Cache
 from flask_babel import _, get_locale
 import sqlalchemy as sa
 from langdetect import detect, LangDetectException
@@ -11,6 +12,7 @@ from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
 from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
+from app import cache
 import asyncio
 
 
@@ -25,6 +27,7 @@ async def before_request():
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
+@cache.cached(timeout=60)
 @login_required
 def index():
     form = PostForm()

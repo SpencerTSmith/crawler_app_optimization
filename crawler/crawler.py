@@ -69,16 +69,17 @@ def register(username, password, driver):
 
 def register_bench():
     start_time = time.time()
+
     workers = mp.Pool()
     workers.map(register_worker, range(mp.cpu_count()))
     workers.close()
-    end_time = time.time()
 
+    end_time = time.time()
     total_duration = end_time - start_time
 
-    # each process should be registering 100 users
+    # each process should be registering 5 users
     n_registered = mp.cpu_count() * 5
-    
+
     logging.info(f"{n_registered} registrations complete in {total_duration}")
 
 def register_worker(_):
@@ -92,16 +93,16 @@ def register_worker(_):
     driver = webdriver.Chrome(options=driver_opts)
     driver.get("http://127.0.0.1:5000")
 
-    # each process registers 100 users
+    # register 5 users
     for _ in range(5):
         username = generate_random_string()
         password = generate_random_string()
         register(username, password, driver)
 
+    logging.info(f"Process {mp.current_process().name} has finished registering users")
     driver.quit()
 
 def post_bench():
-
     start_time = time.time()
     workers = mp.Pool()
     workers.map(register_worker, range(mp.cpu_count()))
@@ -110,7 +111,7 @@ def post_bench():
 
     total_duration = end_time - start_time
 
-    # each process should be registering 100 users
+    # each process should be registering 5 users
     n_registered = mp.cpu_count() * 5
     
     logging.info(f"{n_registered} registrations complete in {total_duration}")

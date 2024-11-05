@@ -195,14 +195,22 @@ def process_message_task(username, password, target_username, message, driver, w
 
 
 def main():
-    webdriver_pool = WebDriverPool(size=4)
+    # Specify task list
     tasks = [
-        ('a', 'a', 'm', "Hello, this is a test message!"),
-        ("m", 'm', 'a', "Another message for you!")
+        ('a', 'a', 'f', "Hello, this is a test message!"),
+        ("m", 'm', 'f', "Another message for you!"),
+        ("c", 'c', 'f', "Another message for you!"),
+        ("e", 'e', 'f', "Another message for you!"),
+        ("f", 'f', 'z', "Another message for you!"),
+        ("z", 'z', 'f', "Another message for you!"),
+        ("x", 'x', 'f', "Another message for you!"),
+        ("v", 'v', 'f', "Another message for you!"),
+        (">", '>', 'f', "Another message for you!"),
+        ("?", '?', 'f', "Another message for you!"),
     ]
-
+    webdriver_pool = WebDriverPool(size=len(tasks))
     start_time = time.time()
-    send_messages_multithreaded(tasks, webdriver_pool, max_workers=4)
+    send_messages_multithreaded(tasks, webdriver_pool, max_workers=len(tasks))
     total_duration = time.time() - start_time
     print(f"Total time taken for all messages: {total_duration:.5f} s")
 

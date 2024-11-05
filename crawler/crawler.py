@@ -25,7 +25,7 @@ class Args(StrEnum):
 
 def generate_random_string():
     letters_and_digits = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters_and_digits) for i in range(10))
+    return ''.join(random.choice(letters_and_digits) for _ in range(5))
 
 def edit_bio(username, bio, driver):
     start_time = time.time()
@@ -103,18 +103,37 @@ def register_worker(_):
     driver.quit()
 
 def post_bench():
-    start_time = time.time()
-    workers = mp.Pool()
-    workers.map(register_worker, range(mp.cpu_count()))
-    workers.close()
-    end_time = time.time()
+    # temp driver to register a new user for benchmarking
+    driver_opts = Options()
+    driver_opts.add_argument("--window-size=1920,1080")
+    driver_opts.add_argument('--no-sandbox')
+    driver_opts.add_argument('--disable-dev-shm-usage')
+    driver_opts.add_argument("--headless=new")
+
+    driver = webdriver.Chrome(options=driver_opts)
+    driver.get("http://127.0.0.1:5000")
+
+    username = generate_random_string()
+    password = generate_random_string()
+    register(username, password, driver)
+
+    driver.quit()
+
+    with mp.Pool() as workers:
+        args = (username, password)
+        all_args = mp.cpu_count() * [args]
+
+        start_time = time.time()
+
+        workers.starmap(func=post_worker, iterable=all_args)
+        workers.close()
+
+        end_time = time.time()
 
     total_duration = end_time - start_time
 
-    # each process should be registering 5 users
-    n_registered = mp.cpu_count() * 5
-    
-    logging.info(f"{n_registered} registrations complete in {total_duration}")
+    n_posts = mp.cpu_count() * 5
+    logging.info(f"{n_posts} posts complete in {total_duration}")
 
 def post_worker(username, password):
     # each process gets a driver
@@ -130,17 +149,11 @@ def post_worker(username, password):
     # login and get to post screen
     login(username, password, driver)
 
-    # start_time = time.time()
-    # driver.find_element(By.ID, 'post').send_keys(message)
-    # driver.find_element(By.ID, 'submit').click()
-    # posts = driver.find_elements(By.TAG_NAME, 'span')
-    # for post in posts:
-    #     if post.text == message:
-    #         duration = time.time() - start_time
-    #         logging.info(f"'{username}' submitted a post successfully: (Duration {duration:.5f} s)")
-    #         return
-    # duration = time.time() - start_time
-    # logging.info(f"'{username}' post failed: (Duration {duration:.5f} s)")
+    for _ in range(5):
+        post(username, password, driver)
+
+    logging.info(f"Process {mp.current_process().name} has finished posting")
+    driver.quit()
 
 def login(username, password, driver):
     start_time = time.time()

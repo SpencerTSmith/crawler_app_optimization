@@ -1,9 +1,9 @@
 import os
+import logging
 from dotenv import load_dotenv
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
-
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
@@ -22,3 +22,38 @@ class Config:
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
     REDIS_URL = os.environ.get('REDIS_URL') or 'redis://'
     POSTS_PER_PAGE = 25
+
+    
+    LOGGING_LEVEL = logging.DEBUG if os.environ.get('DEBUG') else logging.INFO
+
+
+logging.basicConfig(
+    level=Config.LOGGING_LEVEL,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler() if Config.LOG_TO_STDOUT else logging.FileHandler('app.log')
+    ]
+)
+
+
+logger = logging.getLogger(__name__)
+
+def log_debug(message):
+    logger.debug(message)
+
+def log_info(message):
+    logger.info(message)
+
+def log_warning(message):
+    logger.warning(message)
+
+def log_error(message):
+    logger.error(message)
+
+# Example usage:
+if __name__ == "__main__":
+    log_info("Application started.")
+    log_debug("This is a debug message.")
+    log_warning("This is a warning message.")
+    log_error("This is an error message.")
+

@@ -1,0 +1,26 @@
+2024-10-22 13:01:34,266 - INFO - Registration successful for user 'RX6fXJd4uu': (Duration 2.39280 s)
+2024-10-22 13:01:35,382 - INFO - Login successful for user 'RX6fXJd4uu': (Duration 1.11543 s)
+2024-10-22 13:01:36,742 - INFO - 'RX6fXJd4uu' submitted a post successfully: (Duration 1.35919 s)
+2024-10-22 13:01:38,129 - INFO - Bio updated for user 'RX6fXJd4uu': (Duration 1.38677 s)
+2024-10-22 13:01:38,268 - INFO - Logout successful for 'RX6fXJd4uu': (Duration 0.13883 s)
+2024-10-22 13:01:43,726 - INFO - Forgot password request sent for email 'RX6fXJd4uu@gmail.com': (Duration 5.45790 s)
+2024-10-22 13:01:53,952 - ERROR - An error occurred while sending private message to 'm': Message: 
+Stacktrace:
+0   chromedriver                        0x00000001031ec500 cxxbridge1$str$ptr + 1917112
+1   chromedriver                        0x00000001031e4890 cxxbridge1$str$ptr + 1885256
+2   chromedriver                        0x0000000102df4538 cxxbridge1$string$len + 89424
+3   chromedriver                        0x0000000102e38878 cxxbridge1$string$len + 368784
+4   chromedriver                        0x0000000102e72b7c cxxbridge1$string$len + 607124
+5   chromedriver                        0x0000000102e2d374 cxxbridge1$string$len + 322444
+6   chromedriver                        0x0000000102e2dfc4 cxxbridge1$string$len + 325596
+7   chromedriver                        0x00000001031b3d2c cxxbridge1$str$ptr + 1685732
+8   chromedriver                        0x00000001031b8530 cxxbridge1$str$ptr + 1704168
+9   chromedriver                        0x0000000103198e08 cxxbridge1$str$ptr + 1575360
+10  chromedriver                        0x00000001031b8e00 cxxbridge1$str$ptr + 1706424
+11  chromedriver                        0x0000000103189f94 cxxbridge1$str$ptr + 1514316
+12  chromedriver                        0x00000001031d562c cxxbridge1$str$ptr + 1823204
+13  chromedriver                        0x00000001031d57ac cxxbridge1$str$ptr + 1823588
+14  chromedriver                        0x00000001031e4530 cxxbridge1$str$ptr + 1884392
+15  libsystem_pthread.dylib             0x000000019a387fa8 _pthread_start + 148
+16  libsystem_pthread.dylib             0x000000019a382da0 thread_start + 8
+

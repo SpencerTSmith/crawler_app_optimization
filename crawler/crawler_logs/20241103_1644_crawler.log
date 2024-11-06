@@ -1,0 +1,80 @@
+2024-11-03 16:44:26,216 - ERROR - Failed to find or click the Profile link: Message: 
+Stacktrace:
+0   chromedriver                        0x0000000102697648 cxxbridge1$str$ptr + 3645404
+1   chromedriver                        0x000000010268fea8 cxxbridge1$str$ptr + 3614780
+2   chromedriver                        0x00000001020fc104 cxxbridge1$string$len + 88416
+3   chromedriver                        0x000000010213e364 cxxbridge1$string$len + 359360
+4   chromedriver                        0x0000000102177bd0 cxxbridge1$string$len + 594988
+5   chromedriver                        0x0000000102132f54 cxxbridge1$string$len + 313264
+6   chromedriver                        0x0000000102133ba4 cxxbridge1$string$len + 316416
+7   chromedriver                        0x00000001026621e8 cxxbridge1$str$ptr + 3427196
+8   chromedriver                        0x000000010266552c cxxbridge1$str$ptr + 3440320
+9   chromedriver                        0x000000010264960c cxxbridge1$str$ptr + 3325856
+10  chromedriver                        0x0000000102665df0 cxxbridge1$str$ptr + 3442564
+11  chromedriver                        0x000000010263a890 cxxbridge1$str$ptr + 3265060
+12  chromedriver                        0x0000000102680898 cxxbridge1$str$ptr + 3551788
+13  chromedriver                        0x0000000102680a14 cxxbridge1$str$ptr + 3552168
+14  chromedriver                        0x000000010268fb40 cxxbridge1$str$ptr + 3613908
+15  libsystem_pthread.dylib             0x000000019a387fa8 _pthread_start + 148
+16  libsystem_pthread.dylib             0x000000019a382da0 thread_start + 8
+
+2024-11-03 16:44:37,742 - ERROR - Failed to find or click the Profile link: Message: 
+Stacktrace:
+0   chromedriver                        0x0000000102697648 cxxbridge1$str$ptr + 3645404
+1   chromedriver                        0x000000010268fea8 cxxbridge1$str$ptr + 3614780
+2   chromedriver                        0x00000001020fc104 cxxbridge1$string$len + 88416
+3   chromedriver                        0x000000010213e364 cxxbridge1$string$len + 359360
+4   chromedriver                        0x0000000102177bd0 cxxbridge1$string$len + 594988
+5   chromedriver                        0x0000000102132f54 cxxbridge1$string$len + 313264
+6   chromedriver                        0x0000000102133ba4 cxxbridge1$string$len + 316416
+7   chromedriver                        0x00000001026621e8 cxxbridge1$str$ptr + 3427196
+8   chromedriver                        0x000000010266552c cxxbridge1$str$ptr + 3440320
+9   chromedriver                        0x000000010264960c cxxbridge1$str$ptr + 3325856
+10  chromedriver                        0x0000000102665df0 cxxbridge1$str$ptr + 3442564
+11  chromedriver                        0x000000010263a890 cxxbridge1$str$ptr + 3265060
+12  chromedriver                        0x0000000102680898 cxxbridge1$str$ptr + 3551788
+13  chromedriver                        0x0000000102680a14 cxxbridge1$str$ptr + 3552168
+14  chromedriver                        0x000000010268fb40 cxxbridge1$str$ptr + 3613908
+15  libsystem_pthread.dylib             0x000000019a387fa8 _pthread_start + 148
+16  libsystem_pthread.dylib             0x000000019a382da0 thread_start + 8
+
+2024-11-03 16:44:48,327 - ERROR - Failed to find or click the Profile link: Message: 
+Stacktrace:
+0   chromedriver                        0x0000000102697648 cxxbridge1$str$ptr + 3645404
+1   chromedriver                        0x000000010268fea8 cxxbridge1$str$ptr + 3614780
+2   chromedriver                        0x00000001020fc104 cxxbridge1$string$len + 88416
+3   chromedriver                        0x000000010213e364 cxxbridge1$string$len + 359360
+4   chromedriver                        0x0000000102177bd0 cxxbridge1$string$len + 594988
+5   chromedriver                        0x0000000102132f54 cxxbridge1$string$len + 313264
+6   chromedriver                        0x0000000102133ba4 cxxbridge1$string$len + 316416
+7   chromedriver                        0x00000001026621e8 cxxbridge1$str$ptr + 3427196
+8   chromedriver                        0x000000010266552c cxxbridge1$str$ptr + 3440320
+9   chromedriver                        0x000000010264960c cxxbridge1$str$ptr + 3325856
+10  chromedriver                        0x0000000102665df0 cxxbridge1$str$ptr + 3442564
+11  chromedriver                        0x000000010263a890 cxxbridge1$str$ptr + 3265060
+12  chromedriver                        0x0000000102680898 cxxbridge1$str$ptr + 3551788
+13  chromedriver                        0x0000000102680a14 cxxbridge1$str$ptr + 3552168
+14  chromedriver                        0x000000010268fb40 cxxbridge1$str$ptr + 3613908
+15  libsystem_pthread.dylib             0x000000019a387fa8 _pthread_start + 148
+16  libsystem_pthread.dylib             0x000000019a382da0 thread_start + 8
+
+2024-11-03 16:44:59,716 - ERROR - Failed to find or click the Profile link: Message: 
+Stacktrace:
+0   chromedriver                        0x0000000102697648 cxxbridge1$str$ptr + 3645404
+1   chromedriver                        0x000000010268fea8 cxxbridge1$str$ptr + 3614780
+2   chromedriver                        0x00000001020fc104 cxxbridge1$string$len + 88416
+3   chromedriver                        0x000000010213e364 cxxbridge1$string$len + 359360
+4   chromedriver                        0x0000000102177bd0 cxxbridge1$string$len + 594988
+5   chromedriver                        0x0000000102132f54 cxxbridge1$string$len + 313264
+6   chromedriver                        0x0000000102133ba4 cxxbridge1$string$len + 316416
+7   chromedriver                        0x00000001026621e8 cxxbridge1$str$ptr + 3427196
+8   chromedriver                        0x000000010266552c cxxbridge1$str$ptr + 3440320
+9   chromedriver                        0x000000010264960c cxxbridge1$str$ptr + 3325856
+10  chromedriver                        0x0000000102665df0 cxxbridge1$str$ptr + 3442564
+11  chromedriver                        0x000000010263a890 cxxbridge1$str$ptr + 3265060
+12  chromedriver                        0x0000000102680898 cxxbridge1$str$ptr + 3551788
+13  chromedriver                        0x0000000102680a14 cxxbridge1$str$ptr + 3552168
+14  chromedriver                        0x000000010268fb40 cxxbridge1$str$ptr + 3613908
+15  libsystem_pthread.dylib             0x000000019a387fa8 _pthread_start + 148
+16  libsystem_pthread.dylib             0x000000019a382da0 thread_start + 8
+

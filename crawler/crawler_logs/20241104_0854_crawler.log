@@ -1,0 +1,6 @@
+2024-11-04 08:54:10,256 - INFO - Registration successful for user 'gs5ayTyc27': (Duration 0.59083 s)
+2024-11-04 08:54:10,616 - INFO - Login successful for user 'gs5ayTyc27': (Duration 0.35893 s)
+2024-11-04 08:54:10,841 - INFO - 'gs5ayTyc27' submitted a post successfully: (Duration 0.22538 s)
+2024-11-04 08:54:11,273 - INFO - Bio updated for user 'gs5ayTyc27': (Duration 0.43199 s)
+2024-11-04 08:54:11,390 - INFO - Logout successful for 'gs5ayTyc27': (Duration 0.11702 s)
+2024-11-04 08:54:11,638 - INFO - Forgot password request sent for email 'gs5ayTyc27@gmail.com': (Duration 0.24783 s)

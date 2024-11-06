@@ -1,0 +1,6 @@
+2024-11-04 08:44:31,962 - INFO - Registration successful for user '4cYU1nK2VJ': (Duration 0.59879 s)
+2024-11-04 08:44:32,310 - INFO - Login successful for user '4cYU1nK2VJ': (Duration 0.34810 s)
+2024-11-04 08:44:32,958 - INFO - '4cYU1nK2VJ' submitted a post successfully: (Duration 0.64784 s)
+2024-11-04 08:44:33,580 - INFO - Bio updated for user '4cYU1nK2VJ': (Duration 0.62237 s)
+2024-11-04 08:44:33,712 - INFO - Logout successful for '4cYU1nK2VJ': (Duration 0.13168 s)
+2024-11-04 08:44:34,018 - INFO - Forgot password request sent for email '4cYU1nK2VJ@gmail.com': (Duration 0.30548 s)

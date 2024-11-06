@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from flask import render_template, flash, redirect, url_for, request, g, \
     current_app
 from flask_login import current_user, login_required
+from flask_caching import Cache
 from flask_babel import _, get_locale
 import sqlalchemy as sa
 from langdetect import detect, LangDetectException
@@ -11,10 +12,13 @@ from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
 from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
+from app import cache
+from app import socketio
+import asyncio
 
 
 @bp.before_app_request
-def before_request():
+async def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.now(timezone.utc)
         db.session.commit()
@@ -36,8 +40,17 @@ def index():
                     language=language)
         db.session.add(post)
         db.session.commit()
+        socketio.emit('new_post', {'author': current_user.username, 'body': post.body}, broadcast=True)
+        cache.delete(f'index_view_{current_user.id}') # Cache Stuff
         flash(_('Your post is now live!'))
         return redirect(url_for('main.index'))
+    
+    # Cache Stuff
+    cache_key = f'index_view_{current_user.id}'
+    cached_response = cache.get(cache_key)
+    if cached_response is not None:
+        return cached_response
+    
     page = request.args.get('page', 1, type=int)
     posts = db.paginate(current_user.following_posts(), page=page,
                         per_page=current_app.config['POSTS_PER_PAGE'],
@@ -46,6 +59,10 @@ def index():
         if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) \
         if posts.has_prev else None
+    
+    response = render_template('index.html', title=_('Home'), form=form, posts=posts.items, next_url=next_url, prev_url=prev_url)
+    cache.set(cache_key, response, timeout=60)
+
     return render_template('index.html', title=_('Home'), form=form,
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
@@ -155,11 +172,10 @@ def unfollow(username):
 
 @bp.route('/translate', methods=['POST'])
 @login_required
-def translate_text():
+async def translate_text():
     data = request.get_json()
-    return {'text': translate(data['text'],
-                              data['source_language'],
-                              data['dest_language'])}
+    translation = await asyncio.to_thread(translate, data['text'], data['source_language'], data['dest_language'])
+    return {'text': translation}
 
 
 @bp.route('/search')
@@ -218,22 +234,23 @@ def messages():
 
 @bp.route('/export_posts')
 @login_required
-def export_posts():
+async def export_posts():
     if current_user.get_task_in_progress('export_posts'):
         flash(_('An export task is currently in progress'))
     else:
         current_user.launch_task('export_posts', _('Exporting posts...'))
+        await asyncio.sleep(0)
         db.session.commit()
     return redirect(url_for('main.user', username=current_user.username))
 
 
 @bp.route('/notifications')
 @login_required
-def notifications():
+async def notifications():
     since = request.args.get('since', 0.0, type=float)
     query = current_user.notifications.select().where(
         Notification.timestamp > since).order_by(Notification.timestamp.asc())
-    notifications = db.session.scalars(query)
+    notifications = await asyncio.to_thread(lambda: list(db.session.scalars(query)))
     return [{
         'name': n.name,
         'data': n.get_data(),

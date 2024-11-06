@@ -6,9 +6,11 @@
     {% if form %}
     {{ wtf.quick_form(form) }}
     {% endif %}
-    {% for post in posts %}
-        {% include '_post.html' %}
-    {% endfor %}
+    <div id="posts">
+        {% for post in posts %}
+            {% include '_post.html' %}
+        {% endfor %}
+    </div>
     <nav aria-label="Post navigation">
         <ul class="pagination">
             <li class="page-item{% if not prev_url %} disabled{% endif %}">
@@ -23,4 +25,18 @@
             </li>
         </ul>
     </nav>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('new_post', function(data) {
+            const postContainer = document.getElementById('posts');
+            const newPost = document.createElement('div');
+            newPost.classList.add('post'); // Add a class for styling if needed
+            newPost.innerHTML = `<strong>${data.author}:</strong> ${data.body}`;
+            postContainer.prepend(newPost); // Add new post at the top
+        });
+    </script>
 {% endblock %}
+

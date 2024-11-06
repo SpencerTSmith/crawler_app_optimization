@@ -1,0 +1,6 @@
+2024-10-16 16:56:50,664 - INFO - Registration successful for user 'k6g2WCvSrJ': (Duration 3.57645 s)
+2024-10-16 16:56:50,976 - INFO - Login successful for user 'k6g2WCvSrJ': (Duration 0.31243 s)
+2024-10-16 16:56:51,221 - INFO - 'k6g2WCvSrJ' submitted a post successfully: (Duration 0.24417 s)
+2024-10-16 16:56:52,262 - INFO - Bio updated for user 'k6g2WCvSrJ': (Duration 1.04107 s)
+2024-10-16 16:56:52,938 - INFO - Logout successful for 'k6g2WCvSrJ': (Duration 0.67613 s)
+2024-10-16 16:56:53,204 - INFO - Forgot password request sent for email 'k6g2WCvSrJ@gmail.com': (Duration 0.26548 s)

@@ -25,7 +25,7 @@ class Args(StrEnum):
 
 def generate_random_string():
     letters_and_digits = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters_and_digits) for _ in range(5))
+    return ''.join(random.choices(letters_and_digits, k=10))
 
 def edit_bio(username, bio, driver):
     start_time = time.time()
@@ -68,11 +68,11 @@ def register(username, password, driver):
         logging.error(f"Registration failed for user '{username}': (Duration {duration:.5f} s)")
 
 def register_bench():
-    start_time = time.time()
 
-    workers = mp.Pool()
-    workers.map(register_worker, range(mp.cpu_count()))
-    workers.close()
+    with mp.Pool() as workers:
+        start_time = time.time()
+        workers.map(register_worker, range(mp.cpu_count()))
+        workers.close()
 
     end_time = time.time()
     total_duration = end_time - start_time

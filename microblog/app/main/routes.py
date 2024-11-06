@@ -40,7 +40,8 @@ def index():
                     language=language)
         db.session.add(post)
         db.session.commit()
-        socketio.emit('new_post', {'author': current_user.username, 'body': post.body}, broadcast=True)
+        # can't use socketio simply since we are using gunicorn
+        # socketio.emit('new_post', {'author': current_user.username, 'body': post.body}, include_self=False, broadcast=True)
         cache.delete(f'index_view_{current_user.id}') # Cache Stuff
         flash(_('Your post is now live!'))
         return redirect(url_for('main.index'))

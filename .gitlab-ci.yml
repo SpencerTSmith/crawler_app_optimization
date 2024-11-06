@@ -1,0 +1,26 @@
+stages:
+  - deploy
+  - test
+
+deploy:
+  stage: deploy
+  image: python:3.11-slim
+  script:
+    - echo "Installing Microblog dependencies"
+    - pip install -r ./microblog/requirements.txt
+    - echo "Deploying to local server"
+    - cd ./microblog
+    - ./boot.sh &
+    - sleep 5
+
+crawler-test:
+  stage: test
+  image: python:3.11-slim
+  services: 
+    - selenium/standalone-chrome
+  script:
+    - echo "Installing Crawler dependencies"
+    - pip install selenium
+    - pip install pyvirtualdisplay
+    - echo "Running Crawler"
+    - python -m crawler.crawler -h

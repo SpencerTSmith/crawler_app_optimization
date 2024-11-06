@@ -39,9 +39,9 @@ def create_app(config_class=Config):
     cache.init_app(app, config={'CACHE_TYPE': 'simple'})  # Initialize cache here
     Compress(app)
     minify(app=app, html=True, js=True, cssless=True)
-    socketio = SocketIO(app)
 
     db.init_app(app)
+    socketio.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
     mail.init_app(app)

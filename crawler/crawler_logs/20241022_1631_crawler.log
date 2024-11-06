@@ -1,0 +1,21 @@
+2024-10-22 16:31:13,999 - ERROR - An error occurred while sending private message to 'm': Message: no such element: Unable to locate element: {"method":"link text","selector":"m"}
+  (Session info: chrome=129.0.6668.101); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+0   chromedriver                        0x0000000104d38500 cxxbridge1$str$ptr + 1917112
+1   chromedriver                        0x0000000104d30890 cxxbridge1$str$ptr + 1885256
+2   chromedriver                        0x0000000104940538 cxxbridge1$string$len + 89424
+3   chromedriver                        0x0000000104984878 cxxbridge1$string$len + 368784
+4   chromedriver                        0x00000001049beb7c cxxbridge1$string$len + 607124
+5   chromedriver                        0x0000000104979374 cxxbridge1$string$len + 322444
+6   chromedriver                        0x0000000104979fc4 cxxbridge1$string$len + 325596
+7   chromedriver                        0x0000000104cffd2c cxxbridge1$str$ptr + 1685732
+8   chromedriver                        0x0000000104d04530 cxxbridge1$str$ptr + 1704168
+9   chromedriver                        0x0000000104ce4e08 cxxbridge1$str$ptr + 1575360
+10  chromedriver                        0x0000000104d04e00 cxxbridge1$str$ptr + 1706424
+11  chromedriver                        0x0000000104cd5f94 cxxbridge1$str$ptr + 1514316
+12  chromedriver                        0x0000000104d2162c cxxbridge1$str$ptr + 1823204
+13  chromedriver                        0x0000000104d217ac cxxbridge1$str$ptr + 1823588
+14  chromedriver                        0x0000000104d30530 cxxbridge1$str$ptr + 1884392
+15  libsystem_pthread.dylib             0x000000019a387fa8 _pthread_start + 148
+16  libsystem_pthread.dylib             0x000000019a382da0 thread_start + 8
+

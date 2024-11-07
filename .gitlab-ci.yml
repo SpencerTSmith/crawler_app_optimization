@@ -16,11 +16,12 @@ deploy:
 crawler-test:
   stage: test
   image: python:3.11-slim
+  variables: 
+    FF_NETWORK_PER_BUILD: 1
   services: 
     - selenium/standalone-chrome
   script:
     - echo "Installing Crawler dependencies"
-    - pip install selenium
-    - pip install pyvirtualdisplay
+    - pip install -r ./crawler/requirements.txt
     - echo "Running Crawler"
-    - python -m crawler.crawler -h
+    - python -m crawler.crawler --headless

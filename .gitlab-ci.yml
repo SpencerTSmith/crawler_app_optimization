@@ -31,7 +31,6 @@ crawler-test:
   services: 
     - selenium/standalone-chrome
   script:
-    - 
     - echo "Installing Crawler dependencies"
     - pip install -r ./crawler/requirements.txt
     - echo "Running Crawler"

@@ -13,6 +13,16 @@ deploy:
     - ./boot.sh &
     - sleep 5
 
+unit-test:
+  stage: test
+  image: python:3-11-slim
+  script:
+    - echo "Installing Microblog dependencies"
+    - pip install -r ./microblog/requirements.txt
+    - echo "Running unit-tests"
+    - cd ./microblog/
+    - python -m tests
+
 crawler-test:
   stage: test
   image: python:3.11-slim
@@ -21,6 +31,7 @@ crawler-test:
   services: 
     - selenium/standalone-chrome
   script:
+    - 
     - echo "Installing Crawler dependencies"
     - pip install -r ./crawler/requirements.txt
     - echo "Running Crawler"

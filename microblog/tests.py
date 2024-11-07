@@ -126,7 +126,42 @@ class UserModelCase(unittest.TestCase):
         self.assertEqual(f4, [p4])
         logger.debug("Follow posts functionality test completed.")
 
+    def test_user_creation(self):
+        u = User(username='pam', email='pam@example.com ')
+        db.session.add(u)
+        db.session.commit()
+        self.assertEqual(u.username, 'pam')
+        self.assertEqual(u.email, 'pam@example.com')
 
+    def test_post_creation(self):
+        u = User(username='tom', email='tom@example.com')
+        db.session.add(u)
+        db.session.commit()
+        p = Post(body='Welcome!', author=u)
+        db.session.add(p)
+        db.session.commit()
+        self.assertEqual(p.body, 'Welcome!')
+        self.assertEqual(p.author.username, 'tom')
+
+    def test_email_format(self):
+        valid_user = User(username='valid', email='valid@example.com')
+        db.session.add(valid_user)
+        db.session.commit()
+        invalid_user = User(username='invalid', email='invalid')
+        with self.assertRaises(Exception):
+            db.session.add(invalid_user)
+            db.session.commit()
+
+    def test_duplicate_username(self):
+        u1 = User(username='duplicate', email='u1@example.com')
+        u2 = User(username='duplicate', email='u2@example.com')
+        db.session.add(u1)
+        db.session.commit()
+        with self.assertRaises(Exception):
+            db.session.add(u2)
+            db.session.commit()
+
+    
 if __name__ == '__main__':
     logger.info("Starting unit tests.")
     unittest.main(verbosity=2)
